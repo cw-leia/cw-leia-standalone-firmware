@@ -1,0 +1,9 @@
+* LEIA HAL WOOKEY
+ ** Compilation
+  *** For a WOOKEY board
+   WOOKEY=1 make firmware
+  *** For a LEIA board
+   LEIA=1 make firmware
+
+ ** Flash the firmware
+   make burn
