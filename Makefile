@@ -26,13 +26,6 @@ STFLASH=st-flash
 CFLAGS = -nostdlib -g3 -DDEBUG_LVL=0 -Os -mthumb-interwork -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
 LDFLAGS = -nostdlib -g3 -Os -mthumb-interwork -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
-ifeq ($(WOOKEY),1)
-CFLAGS += -DWOOKEY
-endif
-ifeq ($(LEIA),1)
-CFLAGS += -DLEIA
-endif
-
 all: firmware
 
 # Compile the OS sources

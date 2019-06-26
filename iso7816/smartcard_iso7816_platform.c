@@ -78,7 +78,6 @@ const usart_config_t default_smartcard_usart_config = {
 usart_config_t smartcard_usart_config;
 
 
-#ifdef LEIA
 #define SMARTCARD_IO_DIR_PORT		GPIOE_BASE
 #define SMARTCARD_IO_DIR_PIN            3
 const gpio_config_t gpio_smartcard_io_dir = {
@@ -90,20 +89,13 @@ const gpio_config_t gpio_smartcard_io_dir = {
         .speed = PIN_VERY_HIGH_SPEED,
         .type = PIN_OTYPER_PP,
 };
-#endif
 
 /* Is the contact pin active? */
 #define SMARTCARD_CONTACT_ACTIVE	0
 
-/* Smartcard contact detect is PE2 for WOOKEY PC11 for LEIA */
-#ifdef LEIA
+/* Smartcard contact detect is PC11 */
 #define SMARTCARD_CONTACT_PORT          GPIOC_BASE
 #define SMARTCARD_CONTACT_PIN           11
-#endif
-#ifdef WOOKEY
-#define SMARTCARD_CONTACT_PORT          GPIOE_BASE
-#define SMARTCARD_CONTACT_PIN           2
-#endif
 const gpio_config_t gpio_smartcard_contact = {
         .port = SMARTCARD_CONTACT_PORT,
         .pin = SMARTCARD_CONTACT_PIN,
@@ -114,14 +106,8 @@ const gpio_config_t gpio_smartcard_contact = {
         .type = PIN_OTYPER_OD,
 };
 /* Smartcard RST is PE3 */
-#ifdef WOOKEY
-#define SMARTCARD_RST_PORT              GPIOE_BASE
-#define SMARTCARD_RST_PIN               3
-#endif
-#ifdef LEIA
 #define SMARTCARD_RST_PORT              GPIOC_BASE
 #define SMARTCARD_RST_PIN               12
-#endif
 const gpio_config_t gpio_smartcard_rst = {
         .port = SMARTCARD_RST_PORT,
         .pin = SMARTCARD_RST_PIN,
@@ -207,7 +193,6 @@ void platform_init_smartcard_contact(void)
         return; 
 }
 
-#ifdef LEIA
 void platform_init_io_dir(void){
         gpio_set_config(&gpio_smartcard_io_dir);
 }
@@ -219,14 +204,6 @@ static inline void platform_io_dir_read(void){
 static inline void platform_io_dir_write(void){
     gpio_set(&gpio_smartcard_io_dir);
 }
-#endif
-#ifdef WOOKEY
-void platform_init_io_dir(void){}
-
-static inline void platform_io_dir_read(void){}
-
-static inline void platform_io_dir_write(void){}
-#endif
 
 /* Initialize the RST pin */
 void platform_init_smartcard_rst(void)
@@ -245,12 +222,7 @@ void platform_init_smartcard_vcc(void)
         gpio_set_config(&gpio_smartcard_vcc);
 
         /* For now, maintain the Vcc at zero (low) */   
-#ifdef WOOKEY
-        gpio_clear(&gpio_smartcard_vcc);
-#endif
-#ifdef LEIA
 	gpio_set(&gpio_smartcard_vcc);
-#endif
 
         return;
 }
@@ -261,12 +233,8 @@ void platform_init_smartcard_vpp(void)
         gpio_set_config(&gpio_smartcard_vpp);
 
         /* Vpp is set low. Not used for now */
-#ifdef WOOKEY
-        gpio_clear(&gpio_smartcard_vpp);
-#endif
-#ifdef LEIA
         gpio_set(&gpio_smartcard_vpp);
-#endif
+
         return;
 }
 
@@ -279,23 +247,14 @@ void platform_set_smartcard_rst(uint8_t val)
 
 void platform_set_smartcard_vcc(uint8_t val)
 {
-#ifdef WOOKEY
-        gpio_set_value(&gpio_smartcard_vcc, val);
-#endif
-#ifdef LEIA
         gpio_set_value(&gpio_smartcard_vcc, (~val) & 0x01);
-#endif
+
         return;
 }
 
 void platform_set_smartcard_vpp(uint8_t val)
 {
-#ifdef WOOKEY
-        gpio_set_value(&gpio_smartcard_vpp, val);
-#endif
-#ifdef LEIA
         gpio_set_value(&gpio_smartcard_vpp, (~val) & 0x01);
-#endif
 
         return;
 }

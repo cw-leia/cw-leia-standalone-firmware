@@ -206,18 +206,10 @@ const gpio_config_t uart_gpio_config[] = {
 	UART_GPIO_COMMON(GPIOB_BASE, 11, GPIO_AF_USART3),
 	/***************************************/
 	/* USART4 */
-	/* TX is PC10 with alternate function AF8 */
-        #if defined(WOOKEY) || defined(LEIA)
         /* TX is PA0 with alternate function AF8 */
         UART_GPIO_COMMON(GPIOA_BASE, 0, GPIO_AF_USART4),
         /* RX is PA1 with alternate function AF8 */
         UART_GPIO_COMMON(GPIOA_BASE, 1, GPIO_AF_USART4),
-        #else
-        /* TX is PC10 with alternate function AF8 */
-        UART_GPIO_COMMON(GPIOC_BASE, 10, GPIO_AF_USART4),
-        /* RX is PC11 with alternate function AF8 */
-        UART_GPIO_COMMON(GPIOC_BASE, 11, GPIO_AF_USART4),
-        #endif
 	/***************************************/
 	/* USART5 */
 	/* TX is PC12 with alternate function AF8 */

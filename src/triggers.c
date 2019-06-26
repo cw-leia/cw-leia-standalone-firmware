@@ -8,18 +8,6 @@ static volatile uint8_t trigger_hist[TRIGGER_DEPTH]={0};
 static volatile uint8_t trigger_hist_pt = 0;
 
 static trigger_strategy_t strategies[STRATEGY_MAX];
-#ifdef WOOKEY
-const static gpio_config_t trig_gpio_config = {
-    .port=GPIOA_BASE,
-    .pin=1,
-    .set_mask=GPIO_SET_ALL,
-    .pupd = GPIO_NOPULL,
-    .speed = PIN_VERY_HIGH_SPEED,
-    .type = PIN_OTYPER_PP,
-    .mode = PIN_OUTPUT_MODE
-};
-#endif
-#ifdef LEIA
 const static gpio_config_t trig_gpio_config = {
     .port=GPIOA_BASE,
     .pin=15,
@@ -29,7 +17,6 @@ const static gpio_config_t trig_gpio_config = {
     .type = PIN_OTYPER_PP,
     .mode = PIN_OUTPUT_MODE
 };
-#endif
 
 inline int trig_IO(){
     gpio_set_value(&trig_gpio_config, !gpio_get(&trig_gpio_config));
