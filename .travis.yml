@@ -10,6 +10,7 @@ addons:
             - make
             - gcc-arm-none-eabi
             - binutils-arm-none-eabi
+            - libnewlib-arm-none-eabi
             - python-pip
             - python3-pip
             - bash
