@@ -190,7 +190,8 @@ ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffuncti
 # do not want to modify this SDK
 # NOTE2: we force -Wno-address-of-packed-member since we are on a platform where unaligned accesses
 # are allowed, and we have to use packed structures for our protocol
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -Wextra -Werror -Wno-unused-parameter -Wno-type-limits -fdata-sections -ffunction-sections
+# NOTE3: we force -Wnostrict-aliasing for our protocol related casts
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -Wextra -Werror -Wno-unused-parameter -Wno-type-limits -Wno-strict-aliasing -fdata-sections -ffunction-sections
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -DDEBUG -g -gdwarf-2
