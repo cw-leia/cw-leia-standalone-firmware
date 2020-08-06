@@ -1,5 +1,3 @@
-[![pipeline status](https://gitlab.reseau-libre.net/leia/firmware/badges/master/pipeline.svg)](https://gitlab.reseau-libre.net/leia/firmware/-/commits/master)
-
 # LEIA Firmware
 
 This repository hosts the source code files of the LEIA firmware. With them, 
