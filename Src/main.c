@@ -157,6 +157,8 @@ int main(void)
 
     /* Parse a command */
     protocol_parse_cmd();
+
+    return 0;
 }
 
 /**
