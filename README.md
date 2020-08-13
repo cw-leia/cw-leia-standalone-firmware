@@ -6,11 +6,68 @@ This repository hosts the source code files of the LEIA firmware. With them,
 you can (re)build the firmware to adapt it to your needs. To do so several 
 compilation options are detailed below.
 
-## Build options
+
+## Dependencies
+
+The main compilation dependency is an `arm-none-eabi` toolchain that should
+be packaged with your favourite distro, allowing bare metal firmware compilation
+for ARM v7m (Cortex-M) microcontrollers.
+
+The other required dependencies are mainly for flashing the firmware, and will depend
+on the board you target:
+  - For LEIA boards where the DFU protocol can be used, the `dfu-util` tool must
+  be installed and used (this should be packaged in your distro).
+  - For the other boards where SWD is used to flash the firmware, the `st-flash`
+  tool is necessary. This is packaged on some distros, but can also be compiled from
+  sources. An alternative way of flashing firmwares using SWD is to use `openocd`, this
+  is not in the current Makefile and is left as a side work for those who prefer to use
+  this tool.
+
+## Building the firmware
+
+First you have de define the target hardware.
+The default production target is LEIA (LEIA=1).
+You can override this value (see the table bellow for details).
+
+```sh
+make
+```
+
+where `FLAGS` are the ones specified in the table.
+
+If you want to build a production firmware for the LEIA board using the Bitbang
+version:
+
+```sh
+BITBANG=1 make
+```
+
+And if you want to add the debug interface:
+
+```sh
+DEBUG=1 BITBANG=1 make
+```
+
+The end of the compilation should grant you with a summary of the firmware chosen
+options, for example with a `make` with no specific option:
+
+```sh
+$ make
+...
+   text	   data	    bss	    dec	    hex	filename
+  30808	    840	  46828	  78476	  1328c	build/leia-halst.elf
+   [+] **LEIA** board selected (default) 
+      ---------------------------------
+   [+] Protocol on USB USART abstraction
+       (this is the default protocol and debug consoles channel)
+   [+] ISO7816 using USART (default)
+```
+
+### Build options
 
 | Option         | Environment variable | Description                          |
 |----------------|----------------------|--------------------------------------|
-| Board Choice   | LEIA=1 (default)     | This is basically the board choice.  |
+| Target board   | LEIA=1 (default)     | This is basically the board choice.  |
 |                | WOOKEY=1             | For now, LEIA boards, WooKey boards  |
 |                | DISCO407=1           | and F407 / F429 discovery boards are |
 |                | DISCO429=1           | supported. Depending on the specific |
@@ -18,7 +75,7 @@ compilation options are detailed below.
 |                |                      | will vary and must be adapted.       |
 |                |                      |                                      |
 |----------------|----------------------|--------------------------------------|
-| Communication  | USB=1 (default)      | This is the prefered channel used to |
+| Communication  | USB=1 (default)      | This is the preferred channel used to|
 |                | USB=0                | communicate with the board. By       |
 |                |                      | default, two USB /dev/ttyACMx are    |
 |                |                      | used for protocol and debug purposes.|
@@ -59,7 +116,7 @@ compilation options are detailed below.
 |                |                      | embedded on the board).              |
 |                |                      |                                      |
 |----------------|----------------------|--------------------------------------|
-| Debug          | DEBUG=0 (default)    | This activates or desactivates       |
+| Debug          | DEBUG=0 (default)    | This activates or deactivates        |
 |                | DEBUG=1              | the debug console. This console shows|
 |                |                      | the protocol commands and responses  |
 |                |                      | and can help when debugging issues.  |
@@ -69,7 +126,7 @@ compilation options are detailed below.
 |                |                      | with care as it can break the        |
 |                |                      | firmware of existing boards. This    |
 |                |                      | option should be used when adding a  |
-|                |                      | new board or when using a flavour    |
+|                |                      | new board or when using a flavor     |
 |                |                      | of the existing boards that use a    |
 |                |                      | crystal (HSE external oscillator)    |
 |                |                      | that is not on par with the public   |
@@ -80,95 +137,44 @@ compilation options are detailed below.
 |                |                      | means a clock at 8MHz).              |
 |                |                      |                                      |
 |----------------|----------------------|--------------------------------------|
-
-## Dependencies
-
-The main compilation dependency is an `arm-none-eabi` toolchain that should
-be packaged with your favourite distro, allowing bare metal firmware compilation
-for ARM v7m (Cortex-M) microcontrollers.
-
-The other required dependencies are mainly for flashing the firmware, and will depend
-on the board you target:
-  - For LEIA boards where the DFU protocol can be used, the `dfu-util` tool must
-  be installed and used (this should be packaged in your distro).
-  - For the other boards where SWD is used to flash the firmware, the `st-flash`
-  tool is necessary. This is packaged on some distros, but can also be compiled from
-  sources. An alternative way of flashing firmwares using SWD is to use `openocd`, this
-  is not in the current Makefile and is left as a side work for those who prefer to use
-  this tool.
-
-## Compilation
-
-Compilation is as simple as:
-
-```sh
-FLAGS=... make
-```
-
-where `FLAGS` are the ones previusly specified.
-
-If you want to build a production firmware for the LEIA board using the bitbang
-version:
-
-```sh
-BITBANG=1 make
-```
-
-And if you want to add the debug interface:
-
-```sh
-DEBUG=1 BITBANG=1 make
-```
-
-The end of the compilation should grant you with a summary of the firmware chosen
-options, for example with a `make` with no specific option:
-
-```sh
-$ make
-...
-   text	   data	    bss	    dec	    hex	filename
-  30808	    840	  46828	  78476	  1328c	build/leia-halst.elf
-   [+] **LEIA** board selected (default) 
-      ---------------------------------
-   [+] Protocol on USB USART abstraction
-       (this is the default protocol and debug consoles channel)
-   [+] ISO7816 using USART (default)
-```
-
-When compiling with `DISCO407=1 USB=0 BITBANG=1 DEBUG=1` options:
-```sh
-$ DISCO407=1 USB=0 BITBANG=1 DEBUG=1 make
-...
-   text	   data	    bss	    dec	    hex	filename
-  36992	    680	  48332	  86004	  14ff4	build/leia-halst.elf
-   [+] **DISCO** board selected
-          (DISCO F407 board)
-      ---------------------------------
-   [+] DEBUG activated
-       (debug on physical UART)
-   [+] Protocol on physical UART
-   [+] ISO7816 using BITBANG
-```
+``
 
 ## Programming the boards
 
-On LEIA boards, you can use the DFU mode of the STM32F4 bootrom. To activate it,
-you need to:
+The LEIA firmware is compatible with many hardware devices, and each hardware
+has a specific programming process.
 
-    1. Connect LEIA to one of your USB ports
-    2. Hold the reset button
-    3. Press *also* the DFU button
-    4. Release the reset button while keeping the DFU button pressed for 1 second
-    5. Run `make dfu` from your favorite shell
+### LEIA production board
+
+#### Fisrt boot
+By default the LEIA production boards are booting in the DFU mode:
+    1. Disconect the board from USB
+    2. Check that the JP4001 connector is left unconnected, else remove the jumper 
+    3. Connect LEIA to one of your USB ports
+    4. Run `make dfu` from your favorite shell
+    5. After a succesfull flashing session, position the jumper on JP4001 to connect it.
+    This will put LEIA back in the non-DFU nominal mode.
+
+#### Switch LEIA into DFU mode
+    1. Disconect the board from USB
+    2. Remove jumper JP4001 from the board
+    3. Connect LEIA to one of your USB ports
+    4. Run `make dfu` from your favorite shell
+
+### WooKey board
 
 On the WooKey board, you will have to use SWD (Single Wire Debug) protocol to flash
 the board, using e.g. an ST-Link V2 connector connected to the proper pins. Once 
 connected, you can use the `make burn` target to burn the firmware in the board.
 
+### Discovery board
+
 On the DISCO boards (STM32 Discovery F407 and F429), an ST-Link V2 chip is already
 present on the board and you should be able to directly run `make burn` to flash
-the boards. Beware that the mini-USB port is used for flashing, and the micro-USB
-OTG port is used for LEIA protocol and debug /dev/ttyACMx interfaces.
+the boards (please ensure that the board is in 'Discovery' mode using the dedicated
+jumpers). Beware that the mini-USB port is used for flashing, and the micro-USB
+OTG port is used for LEIA protocol and debug through /dev/ttyACMx interfaces.
+
 
 # Boards specific pinouts
 
