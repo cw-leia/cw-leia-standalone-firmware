@@ -176,14 +176,44 @@ void PendSV_Handler(void)
 /**
   * @brief This function handles System tick timer.
   */
+#define MAX_SYSTICK_CALLBACKS 20
+static volatile systick_user_callback systick_callbacks[MAX_SYSTICK_CALLBACKS] = { NULL };
+
+int register_systick_user_callback(systick_user_callback callback)
+{
+    unsigned int i;
+    for(i = 0; i < MAX_SYSTICK_CALLBACKS; i++){
+        if(systick_callbacks[i] == NULL){
+            systick_callbacks[i] = callback;
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void deregister_systick_user_callback(systick_user_callback callback)
+{
+    unsigned int i;
+    for(i = 0; i < MAX_SYSTICK_CALLBACKS; i++){
+        if(systick_callbacks[i] == callback){
+            systick_callbacks[i] = NULL;
+        }
+    }
+    return;
+}
+
 void SysTick_Handler(void)
 {
     /* USER CODE BEGIN SysTick_IRQn 0 */
-
     /* USER CODE END SysTick_IRQn 0 */
     HAL_IncTick();
     /* USER CODE BEGIN SysTick_IRQn 1 */
-
+    unsigned int i;
+    for(i = 0; i < MAX_SYSTICK_CALLBACKS; i++){
+        if(systick_callbacks[i] != NULL){
+            systick_callbacks[i]();
+        }
+    } 
     /* USER CODE END SysTick_IRQn 1 */
 }
 

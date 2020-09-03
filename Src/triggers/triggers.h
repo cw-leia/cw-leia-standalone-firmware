@@ -22,12 +22,14 @@ typedef struct  __attribute__((packed)) {
     /* From 1 to TRIGGER_DEPTH;
      * 0 means not enabled */
     uint8_t size;
-    uint32_t delay;
-    uint32_t delay_cnt;
+    uint32_t delay; /* delay in milliseconds: delay added to strategy triggers */
+    uint8_t single; /* Activate the single mode */
     uint32_t list[TRIGGER_DEPTH];
+    uint32_t list_trigged[TRIGGER_DEPTH];
+    uint32_t cnt_trigged[TRIGGER_DEPTH];
+    uint32_t event_time[TRIGGER_DEPTH];
+    uint32_t apply_delay[TRIGGER_DEPTH];
 } trigger_strategy_t;
-
-int trigger_tick_handler();
 
 int trigger_init_IO();
 int trig_IO();

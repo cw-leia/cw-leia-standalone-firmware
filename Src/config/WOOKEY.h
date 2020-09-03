@@ -73,14 +73,14 @@
 ///////////////////////////// TRIGGER //////////////////////////////////////////
 //
 
-/* NOTE: there is no trigger by default on the WooKey board. If you want to use one,
- * define it here.
- */
-#if 0
-#define TRIG_GPIO_PORT                      GPIOA
-#define TRIG_GPIO_PIN                       LL_GPIO_PIN_1
-#define TRIG_GPIO_ENABLE_CLOCK()            LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
-#endif
+// Our board trigger
+#define TRIG_GPIO_PORT                      GPIOE
+#define TRIG_GPIO_PIN                       LL_GPIO_PIN_11 // (P542)
+#define TRIG_GPIO_ENABLE_CLOCK()            LL_AHB1_GRP1_EnableClock(RCC_AHB1ENR_GPIOEEN)
+// The ChipWhisperer trigger
+#define TRIG_CW_GPIO_PORT                   GPIOE
+#define TRIG_CW_GPIO_PIN                    LL_GPIO_PIN_12 // (P543)
+#define TRIG_CW_GPIO_ENABLE_CLOCK()         LL_AHB1_GRP1_EnableClock(RCC_AHB1ENR_GPIOEEN)
 
 #endif
 

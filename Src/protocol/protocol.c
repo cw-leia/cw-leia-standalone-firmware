@@ -225,7 +225,7 @@ void __protocol_send_wait_extension(uint8_t do_blink)
 {
     if(do_blink == 1){
         led_error_on();
-        HAL_Delay(25);
+        HAL_Delay(1); /* NOTE: we can't blink for too long, we are blocking here! */
         led_error_off();
     }
     console_putc_nb(command_in_progress_char);

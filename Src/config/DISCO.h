@@ -69,27 +69,22 @@
 
 /////////////////////////////// LEDS ///////////////////////////////////////////
 
-#if defined(DISCO407)
 #define LEDS_ERROR_GPIO_PORT                GPIOD
 #define LEDS_ERROR_GPIO_PIN                 LL_GPIO_PIN_12
 #define LEDS_STATUS_GPIO_PORT               GPIOD
 #define LEDS_STATUS_GPIO_PIN                LL_GPIO_PIN_15
 #define LEDS_GPIO_ENABLE_CLOCK()            LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD)
-#elif defined(DISCO429)
-#define LEDS_ERROR_GPIO_PORT                GPIOG
-#define LEDS_ERROR_GPIO_PIN                 LL_GPIO_PIN_14
-#define LEDS_STATUS_GPIO_PORT               GPIOG
-#define LEDS_STATUS_GPIO_PIN                LL_GPIO_PIN_13
-#define LEDS_GPIO_ENABLE_CLOCK()            LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOG)
-#else
-#error "Unknown DISCO board, sorry!"
-#endif
 
 ///////////////////////////// TRIGGER //////////////////////////////////////////
-//
+
+// Our board trigger
 #define TRIG_GPIO_PORT                      GPIOA
 #define TRIG_GPIO_PIN                       LL_GPIO_PIN_1
 #define TRIG_GPIO_ENABLE_CLOCK()            LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+// The ChipWhisperer trigger
+#define TRIG_CW_GPIO_PORT                   GPIOE
+#define TRIG_CW_GPIO_PIN                    LL_GPIO_PIN_10
+#define TRIG_CW_GPIO_ENABLE_CLOCK()         LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOE)
 
 #endif
 

@@ -28,6 +28,7 @@
 #include "console.h"
 #include "protocol.h"
 #include "leds.h"
+#include "triggers.h"
 #include "smartcard.h"
 #include "smartcard_iso7816_platform.h"
 /* USER CODE END Includes */
@@ -155,10 +156,10 @@ int main(void)
 
     platform_init_smartcard_contact();
 
+    trigger_init_IO();
+
     /* Parse a command */
     protocol_parse_cmd();
-
-    return 0;
 }
 
 /**

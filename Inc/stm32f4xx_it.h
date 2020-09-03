@@ -59,6 +59,9 @@ void SysTick_Handler(void);
 void USART1_IRQHandler(void);
 void OTG_FS_IRQHandler(void);
 /* USER CODE BEGIN EFP */
+typedef void (*systick_user_callback)(void);
+int register_systick_user_callback(systick_user_callback callback);
+void deregister_systick_user_callback(systick_user_callback callback);
 
 /* USER CODE END EFP */
 

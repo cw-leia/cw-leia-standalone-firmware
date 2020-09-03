@@ -70,11 +70,16 @@
 #define LEDS_STATUS_GPIO_PIN                    LL_GPIO_PIN_5
 #define LEDS_GPIO_ENABLE_CLOCK()                LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
 
-///////////////////////////// TRIGGER //////////////////////////////////////////
+///////////////////////////// TRIGGERS /////////////////////////////////////////
 
+// Our board trigger
 #define TRIG_GPIO_PORT                          GPIOA
 #define TRIG_GPIO_PIN                           LL_GPIO_PIN_15
 #define TRIG_GPIO_ENABLE_CLOCK()                LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+// The ChipWhisperer trigger
+#define TRIG_CW_GPIO_PORT                       GPIOE
+#define TRIG_CW_GPIO_PIN                        LL_GPIO_PIN_10
+#define TRIG_CW_GPIO_ENABLE_CLOCK()             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOE)
 
 #endif
 
