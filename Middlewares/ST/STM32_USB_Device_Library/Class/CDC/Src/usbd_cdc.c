@@ -878,6 +878,16 @@ static uint8_t  USBD_CDC_Setup (USBD_HandleTypeDef *pdev,
   case USB_REQ_TYPE_CLASS :
     if (req->wLength)
     {
+      /* Check for possible overflow in asked wLength here.
+       * This should patch CVE-2020-15808
+       */
+      if(sizeof(hcdc->data) != CDC_DATA_HS_MAX_PACKET_SIZE){
+          /* Sanity check */
+          return USBD_FAIL;
+      }
+      if(req->wLength > sizeof(hcdc->data)){
+          return USBD_FAIL;
+      }
       if (req->bmRequest & 0x80)
       {
         ((USBD_CDC_ItfTypeDef *)pdev->pUserData)->Control(req->bRequest,
