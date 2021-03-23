@@ -31,6 +31,8 @@
 #include "triggers.h"
 #include "smartcard.h"
 #include "smartcard_iso7816_platform.h"
+#include "flasher.h"
+#include "stk500.h"
 /* USER CODE END Includes */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -41,7 +43,34 @@ static void SystemClock_Config(uint8_t);
 /* USER CODE END 0 */
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
-extern volatile uint32_t dfu_mode_selected;
+/* Mode selected (default, DFU, flasher) */
+extern volatile uint32_t mode_selected;
+volatile uint32_t current_mode = NO_MAGIC;
+
+/* This is the main dispather for the smart card
+ * contact (insertion) PIN.
+ */
+#if (SMARTCARD_CONTACT_ACTIVE == 1)
+void SMARTCARD_CONTACT_IRQHANDLER(void)
+{
+    switch(current_mode){
+        case NO_MAGIC:{
+            /* This is our nominal mode, call our ISO7816 backend */
+            platform_smartcard_contact_handler();
+            break;
+        }
+        case FLASHER_MAGIC:{
+            /* This is our flasher mode, call our flasher backend */
+            platform_flasher_contact_handler();
+            break;
+        }
+        case DFU_MAGIC:
+        default:
+            /* In DFU and other modes, we do not do anything */
+            return;
+    }
+}
+#endif
 
 static inline void GPIO_init(void)
 {
@@ -73,7 +102,7 @@ int main(void)
     HAL_Init();
 
     /* Configure the system clock */
-    if(dfu_mode_selected == DFU_MAGIC){
+    if(mode_selected == DFU_MAGIC){
         /* When DFU mode is selected, we have to force HSE */
         SystemClock_Config(1);
     }
@@ -90,10 +119,12 @@ int main(void)
     dbg_init();
 
     /* Do we have to go to DFU mode? */
-    if(dfu_mode_selected == DFU_MAGIC){
-        dfu_mode_selected = NO_DFU_MAGIC;
+    if(mode_selected == DFU_MAGIC){
+        current_mode = DFU_MAGIC;
+        /* For next reboot */
+        mode_selected = NO_MAGIC;
 
-        dbg_log("Going to DFU mode!\r\n");
+        dbg_log("[+] Going to DFU mode!\r\n");
         dbg_flush();
         HAL_Delay(50);
         /* Goto DFU mode with inline assembly through the BootROM */
@@ -120,48 +151,84 @@ int main(void)
     /* Initialize all configured peripherals */
     led_init();
 
-    dbg_log("======== LEIA FIRMWARE =========\r\n");
-    dbg_log("\tBuilt date\t: %s at %s\r\n", __DATE__, __TIME__);
+    led_startup();
+    led_startup();
+
+    /* Do we have to go to flasher mode? */
+    if(mode_selected == FLASHER_MAGIC){
+        current_mode = FLASHER_MAGIC;
+        /* For next reboot */
+        mode_selected = NO_MAGIC;
+        /****************************************************************/
+        /* When we are in flasher mode, we execute our flasher routines */
+        dbg_log("======== LEIA FIRMWARE (FLASHER MODE) =========\r\n");
+        dbg_log("\tBuilt date\t: %s at %s\r\n", __DATE__, __TIME__);
 #if defined(LEIA)
-    dbg_log("\tBoard\t\t: LEIA\r\n");
+        dbg_log("\tBoard\t\t: LEIA\r\n");
 #elif defined(WOOKEY)
-    dbg_log("\tBoard\t\t: WooKey\r\n");
+        /* Flasher is not supported for the WooKey board */
+        dbg_log("\tBoard\t\t: WooKey, FLASHER not supported ...\r\n");
+        /* Reset the board in nominal mode! */
+        NVIC_SystemReset();
 #elif defined(DISCO)
-    dbg_log("\tBoard\t\t: DISCO\r\n");
+        dbg_log("\tBoard\t\t: DISCO\r\n");
 #if defined(DISCO407)
-    dbg_log("\t\t\t (DISCO407)\r\n");
+        dbg_log("\t\t\t (DISCO407)\r\n");
 #else
-    dbg_log("\t\t\t (DISCO429)\r\n");
+        dbg_log("\t\t\t (DISCO429)\r\n");
 #endif
 #else
-    #error "Unknown board!!"
+        #error "Unknown board!!"
 #endif
-#ifdef ISO7816_BITBANG
+        dbg_log("===============================================\r\n");
+        dbg_flush();
+    
+        dbg_log("Hello from debug.\r\n");
+        dbg_flush();
+ 
+        /* Initialize the flasher hardware */
+        platform_flasher_init();
+        /* Parse STK500 flashing commands */
+        stk500_parse_cmd();
+    }
+    else{
+        /********************************************************/
+        /* This is the "nominal" ISO7816 smart card reader mode */
+        current_mode = NO_MAGIC;
+        mode_selected = NO_MAGIC;
+        dbg_log("======== LEIA FIRMWARE (SMARTREADER MODE) =========\r\n");
+        dbg_log("\tBuilt date\t: %s at %s\r\n", __DATE__, __TIME__);
+#if defined(LEIA)
+        dbg_log("\tBoard\t\t: LEIA\r\n");
+#elif defined(WOOKEY)
+        dbg_log("\tBoard\t\t: WooKey\r\n");
+#elif defined(DISCO)
+        dbg_log("\tBoard\t\t: DISCO\r\n");
+#if defined(DISCO407)
+        dbg_log("\t\t\t (DISCO407)\r\n");
+#else
+        dbg_log("\t\t\t (DISCO429)\r\n");
+#endif
+#else
+        #error "Unknown board!!"
+#endif
 #if defined(WOOKEY)
-    dbg_log("\tISO7816-3 using Bitbang is *NOT supported* on the WooKey board for now!!\r\n");
-    while(1){};
+        dbg_log("\t WARNING: ISO7816-3 using Bitbang is *NOT supported* on the WooKey board for now!!\r\n");
 #endif
-    dbg_log("\tISO7816-3 using Bitbang\r\n");
-#else
-    dbg_log("\tISO7816-3 using accelerated USART\r\n");
-#endif
-    dbg_log("================================\r\n");
-    dbg_flush();
+        dbg_log("====================================================\r\n");
+        dbg_flush();
+    
+        dbg_log("Hello from debug.\r\n");
+        dbg_flush();
 
-    dbg_log("Hello from debug.\r\n");
-    dbg_flush();
+     
+        platform_init_smartcard_contact();
+    
+        trigger_init_IO();
 
-    led_startup();
-    led_startup();
-
-    platform_init_smartcard_contact();
-
-    trigger_init_IO();
-
-    /* Parse a command */
-    protocol_parse_cmd();
-
-    return 0;
+        /* Parse a command */
+        smartreader_protocol_parse_cmd();
+    }
 }
 
 /**

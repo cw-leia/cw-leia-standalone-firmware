@@ -3,11 +3,9 @@
 
 #ifdef WOOKEY
 
-#ifdef ISO7816_BITBANG
-#include "WOOKEY_BITBANG.h"
-#else
 #include "WOOKEY_USART.h"
-#endif
+#include "WOOKEY_BITBANG.h"
+#include "WOOKEY_FLASHER.h"
 
 /////////////////////////// SMARTCARD CONTACT PIN //////////////////////////////
 

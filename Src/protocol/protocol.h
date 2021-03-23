@@ -42,15 +42,6 @@ typedef struct __attribute__((packed)) {
     trigger_strategy_t strategy;
 } protocol_config_trigger_set_t;
 
-void protocol_parse_cmd(void);
-
-uint8_t protocol_send_APDU(SC_Card* card, command_cb_args_t* args);
-uint8_t protocol_get_ATR(SC_Card* card, command_cb_args_t* args);
-uint8_t protocol_reset_card(SC_Card* card, command_cb_args_t* args);
-uint8_t protocol_configure_pts(SC_Card* card, command_cb_args_t* args);
-uint8_t protocol_trigger_get_strategy(SC_Card* card, command_cb_args_t* args);
-uint8_t protocol_trigger_set_strategy(SC_Card* card, command_cb_args_t* args);
-uint8_t protocol_is_card_inserted(SC_Card* card, command_cb_args_t* args);
-uint8_t protocol_get_timers(SC_Card* card, command_cb_args_t* args);
+void smartreader_protocol_parse_cmd(void);
 
 #endif // __PROTOCOL_H

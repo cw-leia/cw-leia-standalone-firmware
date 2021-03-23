@@ -5,8 +5,10 @@
 /* Includes ------------------------------------------------------------------*/
 /* API -----------------------------------------------------------------------*/
 
-#define DFU_MAGIC 0xDEADBEEF
-#define NO_DFU_MAGIC 0xCAFECAFE
+#define NO_MAGIC 		0xCAFECAFE
+#define DFU_MAGIC 		0xDEADBEEF
+#define FLASHER_MAGIC		0xFEEDBABE
+#define SMARTREADER_MAGIC	0xF00DF00D
 
 #include "LEIA.h"
 #include "WOOKEY.h"

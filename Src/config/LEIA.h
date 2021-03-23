@@ -3,11 +3,9 @@
 
 #ifdef LEIA
 
-#ifdef ISO7816_BITBANG
-#include "LEIA_BITBANG.h"
-#else
 #include "LEIA_USART.h"
-#endif
+#include "LEIA_BITBANG.h"
+#include "LEIA_FLASHER.h"
 
 /////////////////////////// SMARTCARD CONTACT PIN //////////////////////////////
 

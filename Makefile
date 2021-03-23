@@ -58,8 +58,11 @@ Src/triggers/triggers.c \
 Src/iso7816/smartcard.c \
 Src/iso7816/helpers.c \
 Src/iso7816/smartcard_iso7816.c \
-Src/iso7816/smartcard_iso7816_platform.c \
+Src/iso7816/smartcard_iso7816_platform_usart.c \
 Src/iso7816/smartcard_iso7816_platform_bitbang.c \
+Src/flasher/flasher_platform.c \
+Src/flasher/flasher.c \
+Src/flasher/stk500.c \
 Middlewares/ringbuff/ringbuff/src/ringbuff/ringbuff.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c \
@@ -172,6 +175,7 @@ C_INCLUDES =  \
 -ISrc/debug \
 -ISrc/leds \
 -ISrc/iso7816 \
+-ISrc/flasher \
 -ISrc/protocol \
 -ISrc/triggers \
 -IMiddlewares/ringbuff/ringbuff/src/include \
@@ -197,9 +201,8 @@ ifeq ($(DEBUG), 1)
 CFLAGS += -DDEBUG -g -gdwarf-2
 endif
 
-# Bitbanging mode of ISO7816-3
-ifeq ($(BITBANG), 1)
-CFLAGS += -DISO7816_BITBANG
+ifeq ($(FORCE_TTY_DEBUG), 1)
+CFLAGS += -DFORCE_TTY_DEBUG
 endif
 
 # Do we want to override the quartz oscillator frequency for HSE
@@ -339,6 +342,9 @@ ifeq ($(DEBUG), 1)
 ifeq ($(USB), 0)
 	@echo "$(bold) $(green)      (debug on physical UART)$(normal)"
 else
+ifeq ($(FORCE_TTY_DEBUG), 1)
+	@echo "$(bold) $(green)      (debug on physical UART forced)$(normal)"
+endif
 	@echo "$(bold) $(green)      (debug on USB UART abstraction)$(normal)"
 endif
 endif
@@ -350,14 +356,14 @@ endif
 else
 	@echo "$(bold) $(green)  [+] Protocol on physical UART$(normal)"
 endif
-ifeq ($(BITBANG), 1)
-	@echo "$(bold) $(green)  [+] ISO7816 using BITBANG$(normal)"
+	@echo "$(bold) $(green)  [+] ISO7816 using USART or BITBANG (selected at runtime, default is USART)$(normal)"
 ifeq ($(WOOKEY), 1)
-	@echo "$(bold) $(red)  [-] Warning: BITBANG is *NOT supported* on the WooKey board ...$(normal)"
-	@echo "$(bold) $(red)      => Compile at your own risks!!$(normal)"
-endif
-else
-	@echo "$(bold) $(green)  [+] ISO7816 using USART (default)$(normal)"
+	@echo "$(bold) $(red)  [-] Warning: BITBANG mode is *NOT supported* on the WooKey board ...$(normal)"
+	@echo "$(bold) $(red)  [-] Warning: FLASHER mode is *NOT supported* on the WooKey board ...$(normal)"
+	@echo "$(bold) $(red)      => NOTE: for safety, these features are deactvated in the formware.$(normal)"
+	@echo "$(bold) $(red)         You can force them in the code while assigning the dedicated GPIOs$(normal)"
+	@echo "$(bold) $(red)         in the WooKey board configuration file (you MUST know what you do).$(normal)"
+	@echo "$(bold) $(red)      => Use it at your own risks!!$(normal)"
 endif
 
 ifneq ($(HSE_PLLM_OVERRIDE), )

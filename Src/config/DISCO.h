@@ -3,11 +3,9 @@
 
 #ifdef DISCO
 
-#ifdef ISO7816_BITBANG
-#include "DISCO_BITBANG.h"
-#else
 #include "DISCO_USART.h"
-#endif
+#include "DISCO_BITBANG.h"
+#include "DISCO_FLASHER.h"
 
 /////////////////////////// SMARTCARD CONTACT PIN //////////////////////////////
 

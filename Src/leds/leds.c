@@ -77,8 +77,7 @@ led_error_toggle()
 void
 led_startup(void)
 {
-    uint8_t i;
-    for(i = 0; i < 5; i++) {
+    for(uint8_t i = 0; i < 5; i++) {
         led_status_on();
         HAL_Delay(50);
         led_status_off();
