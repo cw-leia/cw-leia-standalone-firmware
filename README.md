@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.com/cw-leia/cw-leia-standalone-firmware.svg?branch=master)](https://travis-ci.com/cw-leia/cw-leia-standalone-firmware)
-
 # LEIA Firmware
 
 This repository hosts the source code files of the LEIA firmware. With them, 
