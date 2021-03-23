@@ -1,4 +1,4 @@
--[![Build Status](https://travis-ci.com/cw-leia/cw-leia-standalone-firmware.svg?branch=master)](https://travis-ci.com/cw-leia/cw-leia-standalone-firmware)
+[![Build Status](https://travis-ci.com/cw-leia/cw-leia-standalone-firmware.svg?branch=master)](https://travis-ci.com/cw-leia/cw-leia-standalone-firmware)
 
 # LEIA Firmware
 
