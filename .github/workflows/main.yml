@@ -1,0 +1,18 @@
+name: leia-firmware
+
+# Run this workflow every time a new commit pushed to your repository
+on: push
+
+jobs:
+  vanilla_tests:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository
+      - name: checkout repository
+        uses: actions/checkout@v2
+      # Run actions
+      # Compilation tests
+      - name: compilation tests
+        shell: bash
+        run: |
+          sh build_matrix.sh 
