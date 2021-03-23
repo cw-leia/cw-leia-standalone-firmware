@@ -1347,12 +1347,13 @@ end:
 
 	return 0;
 err:
-        resp->delta_t_answer = platform_get_microseconds_ticks() - resp->delta_t_answer;
 	/* We have an error, clean up stuff */
 	local_memset(&curr_apdu, 0, sizeof(curr_apdu));
 	local_memset(&curr_resp, 0, sizeof(curr_resp));
 	if(resp != NULL){
-		local_memset(resp, 0, sizeof(SC_APDU_resp));
+		resp->le = resp->sw1 = resp->sw2 = 0;
+		local_memset(resp->data, 0, sizeof(resp->data));
+        	resp->delta_t_answer = platform_get_microseconds_ticks() - resp->delta_t_answer;
 	}
 	return -1;
 }
@@ -2211,14 +2212,15 @@ RECEIVE_TPDU_AGAIN_RESP:
 
 	return 0;
 err:
-        resp->delta_t_answer = platform_get_microseconds_ticks() - resp->delta_t_answer;
 	/* We have an error, clean up stuff */
 	local_memset(&tpdu_send, 0, sizeof(SC_TPDU));
 	local_memset(&tpdu_rcv, 0, sizeof(SC_TPDU));
 	local_memset(buffer_send, 0, sizeof(buffer_send));
 	local_memset(buffer_recv, 0, sizeof(buffer_recv));
 	if(resp != NULL){
-		local_memset(resp, 0, sizeof(SC_APDU_resp));
+		resp->le = resp->sw1 = resp->sw2 = 0;
+		local_memset(resp->data, 0, sizeof(resp->data));
+        	resp->delta_t_answer = platform_get_microseconds_ticks() - resp->delta_t_answer;
 	}
 
 	return -1;
