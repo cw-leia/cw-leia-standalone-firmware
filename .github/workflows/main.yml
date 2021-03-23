@@ -13,7 +13,7 @@ jobs:
       # Run actions
       # Compilation tests
       - name: compilation tests
-        uses: fiam/arm-none-eabi-gcc@v1
         shell: bash
         run: |
+          sudo apt-get install gcc-arm-none-eabi;
           ./build_matrix.sh; 
