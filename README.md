@@ -259,6 +259,10 @@ default (`USB=1`), protocol and debug communication channels use the USB FS
 on the PC host side. Usually, `/dev/ttyACMx` is the protocol console and 
 `/dev/ttyACMy` is the debug console when x < y.
 
+**WARNING: beware that some services such as `modemmanager` might interfere with
+the boards proper functionning when they see `/dev/ttyACMx`. You will have to manually
+disable such packages for the LEIA firmware nominal usage.**
+
 # The flasher mode
 
 **WARNING**: regarding LEIA, only new revisions of the board
